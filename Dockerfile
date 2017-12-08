@@ -65,11 +65,42 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
   && apk del .build-deps-yarn
 
-# Vanish install
+# Varnish and chrome headless install
 ENV VARNISH_BACKEND_ADDRESS 127.0.0.1
 ENV VARNISH_MEMORY 100M
 ENV VARNISH_BACKEND_PORT 8080
 
 RUN apk update && \
     apk upgrade && \
-    apk add varnish
+    apk add varnish chromium
+
+# Setup chrome
+# flags from https://github.com/GoogleChrome/lighthouse/blob/master/chrome-launcher/flags.ts
+CMD [ \
+  # Disable various background network services, including extension updating,
+  #   safe browsing service, upgrade detector, translate, UMA
+  "--disable-background-networking", \
+  # Disable installation of default apps on first run
+  "--disable-default-apps", \
+  # Disable all chrome extensions entirely
+  "--disable-extensions", \
+  # Disable the GPU hardware acceleration
+  "--disable-gpu", \
+  # Disable syncing to a Google account
+  "--disable-sync", \
+  # Disable built-in Google Translate service
+  "--disable-translate", \
+  # Run in headless mode
+  "--headless", \
+  # Hide scrollbars on generated images/PDFs
+  "--hide-scrollbars", \
+  # Disable reporting to UMA, but allows for collection
+  "--metrics-recording-only", \
+  # Mute audio
+  "--mute-audio", \
+  # Skip first run wizards
+  "--no-first-run", \
+  # Disable fetching safebrowsing lists, likely redundant due to disable-background-networking
+  "--safebrowsing-disable-auto-update", \
+]
+
