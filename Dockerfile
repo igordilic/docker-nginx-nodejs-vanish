@@ -66,9 +66,9 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && apk del .build-deps-yarn
 
 # Vanish install
-ENV VARNISH_BACKEND_ADDRESS 192.168.1.65
+ENV VARNISH_BACKEND_ADDRESS 127.0.0.1
 ENV VARNISH_MEMORY 100M
-ENV VARNISH_BACKEND_PORT 80
+ENV VARNISH_BACKEND_PORT 8080
 
 RUN apk update && \
     apk upgrade && \
